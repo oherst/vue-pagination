@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    {{ item.title }}
+    {{ item.name }}
   </div>
 </template>
 
@@ -12,7 +12,9 @@ export default {
 
 <style lang="scss">
 .row {
-  //border: 1px solid #eee;
-  //padding: 7px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px;
 }
 </style>

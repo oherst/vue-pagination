@@ -1,6 +1,6 @@
 # vue-table-sort
 
-> Sort and paginate large table
+> Sort/paginate/reorder large(ish) table
 
 ## Build Setup
 

@@ -1,15 +1,21 @@
 <template>
   <div id="app">
-    <h3>Paginated table test</h3>
 
-    <button v-on:click="shuffle">Shuffle</button>
+    <div class="buttons">
+      <button @click="shuffle">Move around</button>
+      <button @click="addMore">Load more</button>
+      <button @click="initArray">Reset</button>
+    </div>
+
+    <h3>Paginated table test</h3>
+    <p>Showing {{ rowsToShow.length }} of {{ fakeData.length }}</p>
 
     <div class="container">
-      <div>
+      <div class="numbers-container">
         <div class="numbers" v-for="n in rowsToShow.length">{{ n }}</div>
       </div>
 
-      <transition-group name="flip-list" tag="div">
+      <transition-group name="flip-list" tag="div" class="rows-container">
 
         <table-row
           v-for="item in rowsToShow"
@@ -20,15 +26,11 @@
       </transition-group>
 
     </div>
-    <div class="load-more" @click="addMore">
-      Load more...
-    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import _ from 'lodash';
 import TableRow from './table-row.vue';
 
 export default {
@@ -44,7 +46,7 @@ export default {
   },
 
   created() {
-    axios.get('https://jsonplaceholder.typicode.com/posts')
+    axios.get('https://jsonplaceholder.typicode.com/comments')
     .then((response) => {
       this.fakeData = response.data;
     })
@@ -59,12 +61,23 @@ export default {
     addMore() {
       const curLen = this.rowsToShow.length;
       const [...partial] = this.fakeData;
-      const additional = partial.slice(curLen, curLen + 10);
+      const additional = partial.slice(curLen, curLen + 20);
 
       this.rowsToShow = [...this.rowsToShow, ...additional];
     },
+    randomNum() {
+      const max = this.rowsToShow.length;
+      return Math.floor(Math.random() * max);
+    },
     shuffle() {
-      this.rowsToShow = _.shuffle(this.rowsToShow);
+      const [...items] = this.rowsToShow;
+      const idx = this.randomNum();
+      const randomItem = items[idx];
+
+      items.splice(idx, 1);
+      items.splice(this.randomNum(), 0, randomItem);
+
+      this.rowsToShow = items;
     }
   }
 }
@@ -72,6 +85,7 @@ export default {
 
 <style lang="scss">
 #app {
+  position: relative;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   color: #2c3e50;
   width: 70%;
@@ -80,6 +94,10 @@ export default {
 
 .container {
   display: flex;
+  margin-top: 50px;
+  .row:nth-child(odd) {
+    background-color: #eee;
+  }
 }
 
 .numbers {
@@ -95,12 +113,18 @@ export default {
   transition: transform 1s;
 }
 
-.load-more {
-  margin: 10px;
-  padding: 10px;
-  background-color: #eee;
-  &:hover {
-    cursor: pointer;
+.buttons {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  right: 0;
+  top: 0;
+  button {
+    margin-bottom: 5px;
   }
+}
+
+.rows-container {
+  flex: 1 0 auto;
 }
 </style>
